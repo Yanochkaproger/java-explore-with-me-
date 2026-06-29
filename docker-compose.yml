@@ -20,3 +20,10 @@ services:
       - POSTGRES_DB=ewm_stats
       - POSTGRES_USER=ewm
       - POSTGRES_PASSWORD=ewm
+
+  ewm-service:
+    ports:
+      - "8080:8080"
+
+  ewm-db:
+    image: postgres:16.1
