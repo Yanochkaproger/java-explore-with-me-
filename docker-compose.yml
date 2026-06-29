@@ -22,8 +22,10 @@ services:
       - POSTGRES_PASSWORD=ewm
 
   ewm-service:
+    profiles: ["ewm"]
     ports:
       - "8080:8080"
 
   ewm-db:
+    profiles: ["ewm"]
     image: postgres:16.1
