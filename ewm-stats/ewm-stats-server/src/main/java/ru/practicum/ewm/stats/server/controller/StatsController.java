@@ -11,6 +11,7 @@ import ru.practicum.ewm.stats.server.service.StatsService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @Slf4j
@@ -23,7 +24,7 @@ public class StatsController {
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveHit(@RequestBody EndpointHit hit) {
+    public void saveHit(@Valid @RequestBody EndpointHit hit) {
         log.info("POST /hit: app={}, uri={}, ip={}, timestamp={}",
                 hit.getApp(), hit.getUri(), hit.getIp(), hit.getTimestamp());
         statsService.saveHit(hit);

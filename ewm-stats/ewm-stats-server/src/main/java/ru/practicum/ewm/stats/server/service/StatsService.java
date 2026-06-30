@@ -34,7 +34,6 @@ public class StatsService {
         repository.save(entity);
     }
 
-    @Transactional(readOnly = true)
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         log.info("Getting stats: start={}, end={}, uris={}, unique={}", start, end, uris, unique);
 
