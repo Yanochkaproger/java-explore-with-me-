@@ -12,4 +12,9 @@
 
     <artifactId>ewm-main-service</artifactId>
     <packaging>pom</packaging>
+
+    <modules>
+        <module>main-dto</module>
+        <module>main-server</module>
+    </modules>
 </project>
