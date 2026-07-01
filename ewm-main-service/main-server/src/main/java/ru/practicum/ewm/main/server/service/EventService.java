@@ -6,7 +6,6 @@ import ru.practicum.ewm.main.dto.event.EventShortDto;
 import ru.practicum.ewm.main.dto.event.NewEventDto;
 import ru.practicum.ewm.main.dto.event.UpdateEventAdminRequest;
 import ru.practicum.ewm.main.dto.event.UpdateEventUserRequest;
-import ru.practicum.ewm.main.server.enums.EventAdminState;
 import ru.practicum.ewm.main.server.enums.EventStatus;
 
 import java.time.LocalDateTime;
@@ -16,14 +15,18 @@ public interface EventService {
 
 
     EventFullDto create(Long userId, NewEventDto newEventDto);
+
     List<EventShortDto> getUserEvents(Long userId, int from, int size);
+
     EventFullDto getUserEvent(Long userId, Long eventId);
+
     EventFullDto updateUserEvent(Long userId, Long eventId, UpdateEventUserRequest request);
 
 
     List<EventFullDto> getEventsForAdmin(List<Long> users, List<EventStatus> states, List<Long> categories,
                                          LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                          int from, int size);
+
     EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest request);
 
 
@@ -31,5 +34,6 @@ public interface EventService {
                                         LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                         Boolean onlyAvailable, String sort,
                                         int from, int size);
+
     EventFullDto getPublicEvent(Long eventId, HttpServletRequest request);
 }
