@@ -14,7 +14,6 @@ import ru.practicum.ewm.main.server.entity.Compilation;
 import ru.practicum.ewm.main.server.entity.Event;
 import ru.practicum.ewm.main.server.exception.NotFoundException;
 import ru.practicum.ewm.main.server.mapper.CompilationMapper;
-import ru.practicum.ewm.main.server.mapper.EventMapper;
 import ru.practicum.ewm.main.server.repository.CompilationRepository;
 import ru.practicum.ewm.main.server.repository.EventRepository;
 import ru.practicum.ewm.main.server.repository.RequestRepository;
