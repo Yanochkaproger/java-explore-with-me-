@@ -44,17 +44,26 @@ public class RequestServiceImpl implements RequestService {
 
         validateNewRequest(event, userId, eventId);
 
-        Request request = Request.builder()
-                .requester(requester)
-                .event(event)
-                .created(LocalDateTime.now())
-                .status(determineRequestStatus(event, eventId))
-                .build();
+        RequestStatus status;
 
-        // Если participantLimit == 0, всегда подтверждаем заявку
-        if (event.getParticipantLimit() == 0) {
-            request.setStatus(RequestStatus.CONFIRMED);
+        if (event.getParticipantLimit() > 0) {
+            Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+            if (confirmedCount >= event.getParticipantLimit()) {
+                throw new ConflictException("Достигнут лимит подтверждённых заявок на участие в событии");
+            }
         }
+
+        if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
+            status = RequestStatus.CONFIRMED;
+        } else {
+            status = RequestStatus.PENDING;
+        }
+
+        Request request = new Request();
+        request.setRequester(requester);
+        request.setEvent(event);
+        request.setCreated(LocalDateTime.now());
+        request.setStatus(status);
 
         Request savedRequest = requestRepository.save(request);
         log.info("Заявка с id={} создана со статусом {}", savedRequest.getId(), savedRequest.getStatus());
@@ -211,17 +220,4 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
-    private RequestStatus determineRequestStatus(Event event, Long eventId) {
-        Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-
-        if (event.getParticipantLimit() > 0 && confirmedCount >= event.getParticipantLimit()) {
-            throw new ConflictException("Достигнут лимит подтверждённых заявок на участие в событии");
-        }
-
-        if (!event.getRequestModeration()) {
-            return RequestStatus.CONFIRMED;
-        }
-
-        return RequestStatus.PENDING;
-    }
 }
