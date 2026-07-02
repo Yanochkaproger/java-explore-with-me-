@@ -105,7 +105,9 @@ public class RequestServiceImpl implements RequestService {
 
         if (newStatus == RequestStatus.CONFIRMED) {
             Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-            int freeSlots = event.getParticipantLimit() - confirmedCount.intValue();
+
+            int freeSlots = event.getParticipantLimit() == 0 ? Integer.MAX_VALUE :
+                    event.getParticipantLimit() - confirmedCount.intValue();
 
             if (event.getParticipantLimit() > 0 && freeSlots <= 0) {
                 throw new ConflictException("Достигнут лимит подтверждённых заявок на участие в событии");
@@ -115,7 +117,9 @@ public class RequestServiceImpl implements RequestService {
                 if (freeSlots > 0) {
                     req.setStatus(RequestStatus.CONFIRMED);
                     confirmedRequests.add(req);
-                    freeSlots--;
+                    if (event.getParticipantLimit() > 0) {
+                        freeSlots--;
+                    }
                 } else {
                     req.setStatus(RequestStatus.REJECTED);
                     rejectedRequests.add(req);
