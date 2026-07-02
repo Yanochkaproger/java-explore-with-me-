@@ -38,3 +38,15 @@ CREATE TABLE IF NOT EXISTS requests (
     status VARCHAR(32) NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS compilations (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title VARCHAR(50) NOT NULL,
+    pinned BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS compilations_events (
+    compilation_id BIGINT NOT NULL REFERENCES compilations(id) ON DELETE CASCADE,
+    event_id BIGINT NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    PRIMARY KEY (compilation_id, event_id)
+);

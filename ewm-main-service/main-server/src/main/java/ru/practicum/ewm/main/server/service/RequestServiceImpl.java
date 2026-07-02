@@ -34,7 +34,6 @@ public class RequestServiceImpl implements RequestService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
-
     @Override
     @Transactional
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
@@ -159,6 +158,10 @@ public class RequestServiceImpl implements RequestService {
             throw new NotFoundException("Заявка с id=" + requestId + " не найдена");
         }
 
+        if (request.getStatus() == RequestStatus.CONFIRMED) {
+            throw new ConflictException("Нельзя отменить уже подтверждённую заявку");
+        }
+
         if (request.getStatus() == RequestStatus.CANCELED || request.getStatus() == RequestStatus.REJECTED) {
             throw new ConflictException("Заявка уже отменена или отклонена");
         }
@@ -199,13 +202,14 @@ public class RequestServiceImpl implements RequestService {
     }
 
     private RequestStatus determineRequestStatus(Event event, Long eventId) {
-        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
-            return RequestStatus.CONFIRMED;
-        }
-
         Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
+
         if (event.getParticipantLimit() > 0 && confirmedCount >= event.getParticipantLimit()) {
             throw new ConflictException("Достигнут лимит подтверждённых заявок на участие в событии");
+        }
+
+        if (!event.getRequestModeration()) {
+            return RequestStatus.CONFIRMED;
         }
 
         return RequestStatus.PENDING;
