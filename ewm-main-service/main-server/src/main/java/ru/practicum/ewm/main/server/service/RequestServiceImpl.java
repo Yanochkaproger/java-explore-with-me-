@@ -208,7 +208,7 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictException("Достигнут лимит подтверждённых заявок на участие в событии");
         }
 
-        if (!event.getRequestModeration()) {
+        if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
             return RequestStatus.CONFIRMED;
         }
 
