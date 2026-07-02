@@ -416,29 +416,42 @@ public class EventServiceImpl implements EventService {
             return Collections.emptyMap();
         }
 
+        LocalDateTime start = events.stream()
+                .map(Event::getCreatedOn)
+                .min(LocalDateTime::compareTo)
+                .orElse(LocalDateTime.now().minusYears(10)); // Безопасный дефолт, если createdOn null
+
+        LocalDateTime end = LocalDateTime.now();
+
+        List<String> uris = events.stream()
+                .map(event -> "/events/" + event.getId())
+                .collect(Collectors.toList());
+
         try {
-            List<String> uris = events.stream()
-                    .map(event -> "/events/" + event.getId())
-                    .collect(Collectors.toList());
+            List<ViewStats> stats = statsClient.getStats(start, end, uris, true);
 
-            LocalDateTime start = events.stream()
-                    .map(Event::getCreatedOn)
-                    .min(LocalDateTime::compareTo)
-                    .orElse(LocalDateTime.now().minusYears(1));
+            if (stats == null || stats.isEmpty()) {
+                return Collections.emptyMap();
+            }
 
-            List<ViewStats> stats = statsClient.getStats(start, LocalDateTime.now(), uris, true);
 
             return stats.stream()
+                    .filter(stat -> stat.getUri() != null && stat.getHits() != null)
                     .collect(Collectors.toMap(
-                            stat -> Long.parseLong(stat.getUri().replace("/events/", "")),
-                            stat -> stat.getHits(),
-                            (a, b) -> a
+                            stat -> {
+
+                                String uri = stat.getUri();
+                                return Long.parseLong(uri.substring(uri.lastIndexOf("/") + 1));
+                            },
+                            ViewStats::getHits,
+                            (existing, replacement) -> existing
                     ));
         } catch (Exception e) {
-            log.warn("Не удалось получить статистику просмотров: {}", e.getMessage());
-            return Collections.emptyMap();
+            log.error("Ошибка при получении статистики из stats-service: {}", e.getMessage());
+            return Collections.emptyMap(); // Если сервис упал, возвращаем 0 просмотров, чтобы не ломать основную логику
         }
     }
+
 
     private Map<Long, Long> getConfirmedRequestsForEvents(List<Event> events) {
         if (events == null || events.isEmpty()) {
