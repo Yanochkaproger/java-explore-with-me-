@@ -34,6 +34,7 @@ public class RequestServiceImpl implements RequestService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
+
     @Override
     @Transactional
     public ParticipationRequestDto createRequest(Long userId, Long eventId) {
@@ -107,6 +108,10 @@ public class RequestServiceImpl implements RequestService {
             Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
             int freeSlots = event.getParticipantLimit() - confirmedCount.intValue();
 
+            if (event.getParticipantLimit() > 0 && freeSlots <= 0) {
+                throw new ConflictException("Достигнут лимит подтверждённых заявок на участие в событии");
+            }
+
             for (Request req : requestsToUpdate) {
                 if (freeSlots > 0) {
                     req.setStatus(RequestStatus.CONFIRMED);
@@ -154,6 +159,10 @@ public class RequestServiceImpl implements RequestService {
             throw new NotFoundException("Заявка с id=" + requestId + " не найдена");
         }
 
+        if (request.getStatus() == RequestStatus.CANCELED || request.getStatus() == RequestStatus.REJECTED) {
+            throw new ConflictException("Заявка уже отменена или отклонена");
+        }
+
         request.setStatus(RequestStatus.CANCELED);
         Request updatedRequest = requestRepository.save(request);
 
@@ -195,8 +204,8 @@ public class RequestServiceImpl implements RequestService {
         }
 
         Long confirmedCount = requestRepository.countByEventIdAndStatus(eventId, RequestStatus.CONFIRMED);
-        if (confirmedCount >= event.getParticipantLimit()) {
-            return RequestStatus.REJECTED;
+        if (event.getParticipantLimit() > 0 && confirmedCount >= event.getParticipantLimit()) {
+            throw new ConflictException("Достигнут лимит подтверждённых заявок на участие в событии");
         }
 
         return RequestStatus.PENDING;

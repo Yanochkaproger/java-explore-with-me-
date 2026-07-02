@@ -13,6 +13,8 @@ import ru.practicum.ewm.main.server.exception.BadRequestException;
 import ru.practicum.ewm.main.server.exception.ConditionNotMetException;
 import ru.practicum.ewm.main.server.exception.ConflictException;
 import ru.practicum.ewm.main.server.exception.NotFoundException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -135,6 +137,18 @@ public class ErrorHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
                 .reason("Error occurred.")
                 .message(e.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMissingParameter(final MissingServletRequestParameterException e) {
+        log.warn("400 {}", e.getMessage(), e);
+        return ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.name())
+                .reason("Incorrectly made request.")
+                .message("Required parameter '" + e.getParameterName() + "' is missing")
                 .timestamp(LocalDateTime.now())
                 .build();
     }
