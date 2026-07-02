@@ -140,6 +140,7 @@ public class RequestServiceImpl implements RequestService {
         }
 
         requestRepository.saveAll(requestsToUpdate);
+        requestRepository.flush();
 
         log.info("Обновлено заявок: подтверждено={}, отклонено={}",
                 confirmedRequests.size(), rejectedRequests.size());
