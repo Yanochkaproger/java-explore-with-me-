@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main.dto.error;
+package ru.practicum.ewm.main.server.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

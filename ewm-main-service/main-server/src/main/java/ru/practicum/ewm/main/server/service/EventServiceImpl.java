@@ -34,6 +34,7 @@ import ru.practicum.ewm.main.server.specification.EventSpecification;
 import ru.practicum.ewm.stats.client.StatsClient;
 import ru.practicum.ewm.stats.dto.EndpointHit;
 import ru.practicum.ewm.stats.dto.ViewStats;
+import ru.practicum.ewm.main.server.exception.BadRequestException;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -346,7 +347,7 @@ public class EventServiceImpl implements EventService {
 
     private void checkDateAndTime(LocalDateTime eventDate) {
         if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new ConflictException(
+            throw new BadRequestException(
                     "Дата начала события должна быть не раньше, чем через 2 часа от текущего момента");
         }
     }
