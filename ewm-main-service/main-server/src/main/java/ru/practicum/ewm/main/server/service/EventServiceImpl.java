@@ -266,12 +266,15 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid,
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                Boolean onlyAvailable, String sort,
-                                               int from, int size) {
+                                               int from, int size,
+                                               HttpServletRequest request) { // ⚠️ Принимаем request
         log.info("Получение списка публичных событий");
 
         if (rangeStart != null && rangeEnd != null && rangeEnd.isBefore(rangeStart)) {
             throw new BadRequestException("Дата окончания не может быть раньше даты начала");
         }
+
+        sendStats(request);
 
         int fetchSize = "VIEWS".equals(sort) ? from + size : size;
         Pageable pageable = createPageableWithSort(from, size, sort, fetchSize);
@@ -332,6 +335,7 @@ public class EventServiceImpl implements EventService {
                 viewsMap.getOrDefault(eventId, 0L),
                 confirmedMap.getOrDefault(eventId, 0L));
     }
+
 
     private User checkUser(Long userId) {
         return userRepository.findById(userId)
