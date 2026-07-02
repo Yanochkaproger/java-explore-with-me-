@@ -51,6 +51,11 @@ public class RequestServiceImpl implements RequestService {
                 .status(determineRequestStatus(event, eventId))
                 .build();
 
+        // Если participantLimit == 0, всегда подтверждаем заявку
+        if (event.getParticipantLimit() == 0) {
+            request.setStatus(RequestStatus.CONFIRMED);
+        }
+
         Request savedRequest = requestRepository.save(request);
         log.info("Заявка с id={} создана со статусом {}", savedRequest.getId(), savedRequest.getStatus());
 
@@ -212,11 +217,10 @@ public class RequestServiceImpl implements RequestService {
             throw new ConflictException("Достигнут лимит подтверждённых заявок на участие в событии");
         }
 
-        if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
+        if (!event.getRequestModeration()) {
             return RequestStatus.CONFIRMED;
         }
 
         return RequestStatus.PENDING;
     }
 }
-//исправила
