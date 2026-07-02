@@ -115,6 +115,12 @@ public class RequestServiceImpl implements RequestService {
             if (!req.getEvent().getId().equals(eventId)) {
                 throw new NotFoundException("Заявка с id=" + req.getId() + " не найдена");
             }
+            // --- ДОБАВЬТЕ ЭТУ ПРОВЕРКУ ---
+            // Статус можно менять только у заявок, находящихся в состоянии ожидания (PENDING)
+            if (req.getStatus() != RequestStatus.PENDING) {
+                throw new ConflictException("Статус можно менять только у заявок со статусом PENDING");
+            }
+
         }
 
         if (newStatus == RequestStatus.CONFIRMED) {
@@ -163,6 +169,7 @@ public class RequestServiceImpl implements RequestService {
                         .collect(Collectors.toList()))
                 .build();
     }
+
 
     @Override
     @Transactional
