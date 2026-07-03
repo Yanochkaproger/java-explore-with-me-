@@ -1,5 +1,6 @@
 package ru.practicum.ewm.main.server.specification;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.ewm.main.server.entity.Event;
 import ru.practicum.ewm.main.server.enums.EventStatus;
@@ -7,9 +8,10 @@ import ru.practicum.ewm.main.server.enums.EventStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@UtilityClass
 public class EventSpecification {
 
-    public static Specification<Event> hasText(String text) {
+    public Specification<Event> hasText(String text) {
         return (root, query, cb) -> {
             if (text == null || text.isBlank()) {
                 return null;
@@ -22,7 +24,7 @@ public class EventSpecification {
         };
     }
 
-    public static Specification<Event> hasCategories(List<Long> categories) {
+    public Specification<Event> hasCategories(List<Long> categories) {
         return (root, query, cb) -> {
             if (categories == null || categories.isEmpty()) {
                 return null;
@@ -31,7 +33,7 @@ public class EventSpecification {
         };
     }
 
-    public static Specification<Event> isPaid(Boolean paid) {
+    public Specification<Event> isPaid(Boolean paid) {
         return (root, query, cb) -> {
             if (paid == null) {
                 return null;
@@ -40,7 +42,7 @@ public class EventSpecification {
         };
     }
 
-    public static Specification<Event> hasRangeStart(LocalDateTime rangeStart) {
+    public Specification<Event> hasRangeStart(LocalDateTime rangeStart) {
         return (root, query, cb) -> {
             if (rangeStart == null) {
                 return null;
@@ -49,7 +51,7 @@ public class EventSpecification {
         };
     }
 
-    public static Specification<Event> hasRangeEnd(LocalDateTime rangeEnd) {
+    public Specification<Event> hasRangeEnd(LocalDateTime rangeEnd) {
         return (root, query, cb) -> {
             if (rangeEnd == null) {
                 return null;
@@ -58,11 +60,11 @@ public class EventSpecification {
         };
     }
 
-    public static Specification<Event> isPublished() {
+    public Specification<Event> isPublished() {
         return (root, query, cb) -> cb.equal(root.get("state"), EventStatus.PUBLISHED);
     }
 
-    public static Specification<Event> hasUsers(List<Long> users) {
+    public Specification<Event> hasUsers(List<Long> users) {
         return (root, query, cb) -> {
             if (users == null || users.isEmpty()) {
                 return null;
@@ -71,7 +73,7 @@ public class EventSpecification {
         };
     }
 
-    public static Specification<Event> hasStates(List<EventStatus> states) {
+    public Specification<Event> hasStates(List<EventStatus> states) {
         return (root, query, cb) -> {
             if (states == null || states.isEmpty()) {
                 return null;

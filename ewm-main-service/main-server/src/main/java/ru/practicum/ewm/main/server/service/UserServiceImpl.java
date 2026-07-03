@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
         log.info("Getting users: ids={}, from={}, size={}", ids, from, size);
         Pageable pageable = PageRequest.of(from / size, size);
