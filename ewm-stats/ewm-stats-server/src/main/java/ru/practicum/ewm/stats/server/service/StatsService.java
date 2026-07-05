@@ -37,11 +37,24 @@ public class StatsService {
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         log.info("Getting stats: start={}, end={}, uris={}, unique={}", start, end, uris, unique);
 
+
+        boolean hasUris = (uris != null && !uris.isEmpty());
+
         if (unique) {
-            return repository.getStatsUnique(start, end, uris);
+            if (hasUris) {
+                return repository.getStatsUniqueWithUris(start, end, uris);
+            } else {
+                return repository.getStatsUniqueWithoutUris(start, end);
+            }
         } else {
-            return repository.getStats(start, end, uris);
+            if (hasUris) {
+                return repository.getStatsWithUris(start, end, uris);
+            } else {
+                return repository.getStatsWithoutUris(start, end);
+            }
         }
     }
 }
+//изменения
+
 
