@@ -1,0 +1,113 @@
+{
+  "info": {
+    "_postman_id": "ewm-feature-comments-test-id",
+    "name": "EWM - Comments Feature Tests",
+    "schema": "https://getpostman.com"
+  },
+  "item": [
+    {
+      "name": "Добавление комментария к опубликованному событию (201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"text\": \"Отличный тест для отличного события! Нам очень нравится!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "comments",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получение списка комментариев к событию (200 OK)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/events/1/comments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "events",
+            "1",
+            "comments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Обновление своего комментария автором (200 OK)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"text\": \"Обновленный текст комментария. Все работает стабильно!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/users/1/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "users",
+            "1",
+            "comments",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Удаление комментария администратором (24 No Content)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/admin/comments/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "admin",
+            "comments",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
